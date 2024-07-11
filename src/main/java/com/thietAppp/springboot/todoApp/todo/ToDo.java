@@ -1,18 +1,23 @@
 package com.thietAppp.springboot.todoApp.todo;
 
 import java.time.LocalDate;
+
+import jakarta.validation.constraints.Size;
 //Database (Mysql)
 // Static List of Todos => DB(h2,Mysql)
 public class ToDo {
 	private int ID;
-	private String name,description;
+	private String name;
+	
+	@Size(min = 10, message = "Enter more Character!")
+	private String description;
 	private LocalDate targetDate;
 	boolean done;
 	
 	
-	public ToDo(int iD, String name, String description, LocalDate targetDate, boolean done) {
+	public ToDo(int ID, String name, String description, LocalDate targetDate, boolean done) {
 		super();
-		ID = iD;
+		this.ID = ID;
 		this.name = name;
 		this.description = description;
 		this.targetDate = targetDate;
