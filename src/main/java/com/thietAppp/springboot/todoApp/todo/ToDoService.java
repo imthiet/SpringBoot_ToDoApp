@@ -26,7 +26,8 @@ public class ToDoService {
 	
 	public List<ToDo> findByUserName (String name)
 	{
-		return todos;
+		Predicate<? super ToDo> predicate = todo -> todo.getName().equalsIgnoreCase(name);
+		return todos.stream().filter(predicate).toList();
 	}
 	
 	public void addToDo(String name,String description,LocalDate targetDate, boolean done)

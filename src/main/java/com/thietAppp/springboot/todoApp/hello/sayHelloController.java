@@ -10,31 +10,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 public class sayHelloController {
 	
-	//"say-hello" = > "Hello! SpringBoot is hear!
-	//http://localhost:8080/say_hello
-	
-	
-	
-	//insert some HTML code
-//	@RequestMapping("say_hello_html")
-//	@ResponseBody
-//	public String sayHelloHtml()
-//	{
-//		StringBuffer sb = new StringBuffer();
-//		sb.append("<html>");
-//		sb.append("<head>");
-//		sb.append(" <title>\r\n"
-//				+ "            Yhiet Quang to do App\r\n"
-//				+ "        </title>");
-//		sb.append("</head>");
-//		sb.append("<body>");
-//		sb.append(" My first App!");
-//		sb.append("</body>");
-//		sb.append("</html>");
-//		
-//		
-//		return  sb.toString();
-//	}
+
 	// say_hello.jsp
 	// /src/main/resources/MEAT-INF/resources/WEB-INF/jsp/sayHello.jsp
 	@RequestMapping("say_hello_jsp")

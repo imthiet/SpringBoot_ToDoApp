@@ -17,24 +17,27 @@ import org.springframework.web.bind.annotation.SessionAttributes;
 
 import jakarta.validation.Valid;
 
-//@Controller
+@Controller
 @SessionAttributes("name")
-public class ToDoController {
+public class ToDoControllerJpa {
 
-	// list-todos
+	
 
-	private ToDoService toDoService;
+	
+	private TodoRepository todoRepository;
 
-	public ToDoController(ToDoService toDoService) {
+	public ToDoControllerJpa(TodoRepository todoRepository) {
 		super();
-		this.toDoService = toDoService;
+	
+		this.todoRepository = todoRepository;
 	}
 
 	@RequestMapping("list-todos") // url
 
 	public String listAllToDos(Model model) {
 		String username = (String) model.getAttribute("name");
-		List<ToDo> todos = toDoService.findByUserName(username);
+		
+		List<ToDo> todos = todoRepository.findByname(username);
 		model.addAttribute("todos", todos);
 		return "listToDos";// file jsp
 	}
@@ -57,8 +60,10 @@ public class ToDoController {
 		}
 
 		String username = (String) model.get("name");
-		toDoService.addToDo(username, todo.getDescription(), todo.getTargetDate(), false);
-
+		todo.setName(username);
+		todoRepository.save(todo); 	
+	//	toDoService.
+//		addToDo(username, todo.getDescription(), todo.getTargetDate(), todo.isDone());
 		return "redirect:list-todos";// file jsp
 	}
 
@@ -66,7 +71,8 @@ public class ToDoController {
 	@RequestMapping("delete-todo") // url
 	public String deleteTodo(@RequestParam int ID) {
 		// delete
-		toDoService.deleteByID(ID);
+		todoRepository.deleteById(ID);
+//		toDoService.deleteByID(ID);
 		return "redirect:list-todos";// file jsp
 
 	}
@@ -75,7 +81,7 @@ public class ToDoController {
 	@RequestMapping(value="update-todo",method = RequestMethod.GET) // url
 	public String showUpdateTodo(@RequestParam int ID,ModelMap model) {
 		// update
-		ToDo todo = toDoService.findbyID(ID);
+		ToDo todo = todoRepository.findById(ID).get();
 		model.addAttribute("todo", todo);
 		return "todo";// file jsp
 
@@ -91,7 +97,8 @@ public class ToDoController {
 
 			String username = (String) model.get("name");
 			todo.setName(username);
-			toDoService.updateTodo(todo);
+			todoRepository.save(todo);
+			//toDoService.updateTodo(todo);
 			return "redirect:list-todos";// file jsp
 		}
 

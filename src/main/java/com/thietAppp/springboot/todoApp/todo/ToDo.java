@@ -2,11 +2,23 @@ package com.thietAppp.springboot.todoApp.todo;
 
 import java.time.LocalDate;
 
+import jakarta.annotation.Generated;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 import jakarta.validation.constraints.Size;
 //Database (Mysql)
 // Static List of Todos => DB(h2,Mysql)
+
+@Entity
 public class ToDo {
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int ID;
+	
+	
 	private String name;
 	
 	@Size(min = 10, message = "Enter more Character!")
@@ -24,7 +36,10 @@ public class ToDo {
 		this.done = done;
 	}
 
-
+	public ToDo()
+	{
+		
+	}
 	public int getID() {
 		return ID;
 	}
