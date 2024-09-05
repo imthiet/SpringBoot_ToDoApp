@@ -43,12 +43,12 @@ public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 	http
 			.authorizeHttpRequests(authorizeRequests ->
 					authorizeRequests
-							.requestMatchers("/register","/","/sayHello","/register.html", "/css/**", "/js/**").permitAll() // Cho phép truy cập công khai
+							.requestMatchers("/register","/","/sayHello","/register.html", "/css/**", "/js/**").permitAll()
 							.anyRequest().authenticated() // Yêu cầu xác thực cho các yêu cầu khác
 			)
 //			.formLogin(withDefaults())
 			.formLogin(form -> form
-				//	.loginPage("/login_main") // Nếu muốn dùng trang login custom
+				//	.loginPage("/login_main")
 					.defaultSuccessUrl("/", true) // Chuyển hướng đến /home sau khi đăng nhập thành công
 					.permitAll() // Cho phép truy cập trang login
 			)
