@@ -5,7 +5,7 @@
 		       		<h1>Welcome ${name}</h1>
 			        
 			        <hr>
-			        <div><a href = "list-todos-jpa">Manage your jobs</a></div>
+			        <div><a href = "list-todos">Manage your jobs</a></div>      
 		       </div>
 <%@ include file = "commom/footer.jspf" %>>       
         

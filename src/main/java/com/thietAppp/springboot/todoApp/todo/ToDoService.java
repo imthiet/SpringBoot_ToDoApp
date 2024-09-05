@@ -7,51 +7,42 @@ import java.util.function.Predicate;
 
 import org.springframework.stereotype.Service;
 
-import jakarta.validation.Valid;
+import com.thietAppp.springboot.todoApp.User.User;
 
+import jakarta.validation.Valid;
 
 @Service
 public class ToDoService {
-	private static List<ToDo> todos = new ArrayList();
+	private static List<ToDo> todos = new ArrayList<>();
 	private static int todosCount = 0;
-	static {
-		todos.add(new ToDo(++todosCount,"thietQuang","SpringBoot learn",
-				LocalDate.now().plusMonths(3),false));
-		todos.add(new ToDo(++todosCount,"thietQuang","AWS learn",
-				LocalDate.now().plusMonths(3),false));
-		todos.add(new ToDo(++todosCount,"thietQuang","FE learn",
-				LocalDate.now().plusMonths(2),false));
-		
-	}
-	
-	public List<ToDo> findByUserName (String name)
-	{
-		Predicate<? super ToDo> predicate = todo -> todo.getName().equalsIgnoreCase(name);
+
+	// Tìm kiếm các ToDo liên kết với một User cụ thể
+	public List<ToDo> findByUser(User user) {
+		Predicate<? super ToDo> predicate = todo -> todo.getUser().equals(user);
 		return todos.stream().filter(predicate).toList();
 	}
-	
-	public void addToDo(String name,String description,LocalDate targetDate, boolean done)
-	{
-		ToDo todo = new ToDo(++todosCount,name,description,targetDate,done);
+
+	// Thêm một ToDo mới với User được liên kết
+	public void addToDo(User user, String description, LocalDate targetDate, boolean done) {
+		ToDo todo = new ToDo(++todosCount, description, targetDate, done, user);
 		todos.add(todo);
 	}
-	public void deleteByID(int ID)
-	{
-		//todo.getID() = id
+
+	// Xóa một ToDo dựa trên ID
+	public void deleteByID(int ID) {
 		Predicate<? super ToDo> predicate = todo -> todo.getID() == ID;
 		todos.removeIf(predicate);
 	}
 
-	public ToDo findbyID(int ID) {
+	// Tìm một ToDo dựa trên ID
+	public ToDo findByID(int ID) {
 		Predicate<? super ToDo> predicate = todo -> todo.getID() == ID;
-		
-		ToDo todo = todos.stream().filter(predicate).findFirst().get();
-		return todo;
+		return todos.stream().filter(predicate).findFirst().orElse(null);
 	}
 
+	// Cập nhật một ToDo hiện có
 	public void updateTodo(@Valid ToDo todo) {
-		 deleteByID(todo.getID());
-		 todos.add(todo);
-		
+		deleteByID(todo.getID());
+		todos.add(todo);
 	}
 }

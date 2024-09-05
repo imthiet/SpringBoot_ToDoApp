@@ -1,96 +1,79 @@
 package com.thietAppp.springboot.todoApp.todo;
 
-import java.time.LocalDate;
-
-import java.util.List;
-
-import org.springframework.ui.Model;
+import com.thietAppp.springboot.todoApp.User.User;
+import com.thietAppp.springboot.todoApp.User.UserRepository;
+import jakarta.validation.Valid;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.SessionAttributes;
+import org.springframework.web.bind.annotation.*;
 
-import jakarta.validation.Valid;
+import java.time.LocalDate;
+import java.util.List;
 
-//@Controller
-@SessionAttributes("name")
+@Controller
 public class ToDoController {
 
-	// list-todos
+	@Autowired
+	private TodoRepository todoRepository;
 
-	private ToDoService toDoService;
+	@Autowired
+	private UserRepository userRepository;
 
-	public ToDoController(ToDoService toDoService) {
-		super();
-		this.toDoService = toDoService;
-	}
-
-	@RequestMapping("list-todos") // url
-
-	public String listAllToDos(Model model) {
-		String username = (String) model.getAttribute("name");
-		List<ToDo> todos = toDoService.findByUserName(username);
-		model.addAttribute("todos", todos);
-		return "listToDos";// file jsp
-	}
-
-	// GET method
-	@RequestMapping(value = "add-todo", method = RequestMethod.GET) // url
-	public String showNewToDo(ModelMap model) {
+	@RequestMapping(value = "list", method = RequestMethod.GET)
+	public String listAllTodos(ModelMap model) {
 		String username = (String) model.get("name");
-		ToDo todo = new ToDo(0, username, "Des11111 Here", LocalDate.now().plusMonths(2), false);
-		model.put("todo", todo);
-		return "todo";// file jsp
+		List<ToDo> todos = todoRepository.findByUser_Username(username);
+		model.put("todos", todos);
+		return "listTodos";
 	}
 
-	// POST method
-	@RequestMapping(value = "add-todo", method = RequestMethod.POST) // url
+	@RequestMapping(value = "add-todo", method = RequestMethod.GET)
+	public String showNewTodoPage(ModelMap model) {
+		ToDo todo = new ToDo();
+		model.put("todo", todo);
+		return "todo";
+	}
+
+	@RequestMapping(value = "add-todo", method = RequestMethod.POST)
 	public String addNewToDo(@Valid @ModelAttribute("todo") ToDo todo, BindingResult result, ModelMap model) {
 		if (result.hasErrors()) {
-
-			return "todo";// file jsp
+			return "todo";
 		}
 
 		String username = (String) model.get("name");
-		toDoService.addToDo(username, todo.getDescription(), todo.getTargetDate(), false);
-
-		return "redirect:list-todos";// file jsp
+		User user = userRepository.findByUsername(username) .orElseThrow(() -> new UsernameNotFoundException("User not found with username: " + username));;
+		todo.setUser(user);
+		todo.setTargetDate(LocalDate.now().plusWeeks(1));
+		todoRepository.save(todo);
+		return "redirect:list-todos";
 	}
 
-	// delete
-	@RequestMapping("delete-todo") // url
-	public String deleteTodo(@RequestParam int ID) {
-		// delete
-		toDoService.deleteByID(ID);
-		return "redirect:list-todos";// file jsp
-
+	@RequestMapping(value = "delete-todo", method = RequestMethod.GET)
+	public String deleteTodo(@RequestParam int id) {
+		todoRepository.deleteById(id);
+		return "redirect:list-todos";
 	}
 
-	// update
-	@RequestMapping(value="update-todo",method = RequestMethod.GET) // url
-	public String showUpdateTodo(@RequestParam int ID,ModelMap model) {
-		// update
-		ToDo todo = toDoService.findbyID(ID);
-		model.addAttribute("todo", todo);
-		return "todo";// file jsp
-
+	@RequestMapping(value = "update-todo", method = RequestMethod.GET)
+	public String showUpdateTodoPage(@RequestParam int id, ModelMap model) {
+		ToDo todo = todoRepository.findById(id).orElse(null);
+		model.put("todo", todo);
+		return "todo";
 	}
-	
-	// POST method
-		@RequestMapping(value = "update-todo", method = RequestMethod.POST) // url
-		public String updateToDo(@Valid @ModelAttribute("todo") ToDo todo, BindingResult result, ModelMap model) {
-			if (result.hasErrors()) {
 
-				return "todo";// file jsp
-			}
-
-			String username = (String) model.get("name");
-			todo.setName(username);
-			toDoService.updateTodo(todo);
-			return "redirect:list-todos";// file jsp
+	@RequestMapping(value = "update-todo", method = RequestMethod.POST)
+	public String updateTodo(@Valid @ModelAttribute("todo") ToDo todo, BindingResult result, ModelMap model) {
+		if (result.hasErrors()) {
+			return "todo";
 		}
 
+		String username = (String) model.get("name");
+		User user = userRepository.findByUsername(username). orElseThrow(() -> new UsernameNotFoundException("User not found with username: " + username));;
+		todo.setUser(user);
+		todoRepository.save(todo);
+		return "redirect:list-todos";
+	}
 }
